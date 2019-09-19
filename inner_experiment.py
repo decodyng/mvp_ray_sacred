@@ -6,7 +6,6 @@ inner_ex = Experiment('inner_ex')
 
 @inner_ex.config
 def baseline_config():
-    my_name = "Cody"
     exponent = 2
     offset = 10
     min_val = 0

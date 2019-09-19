@@ -1,0 +1,6 @@
+sacred==0.7.5
+ray==0.7.4
+pandas>=0.25.1
+psutil>=5.6.3
+pymongo>=3.9.0
+requests>=2.22.0

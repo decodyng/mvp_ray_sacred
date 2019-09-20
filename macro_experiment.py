@@ -29,6 +29,13 @@ def worker_function(inner_ex_config, config):
     ret_val = inner_ex.run(config_updates=merged_config)
     track.log(accuracy=ret_val.result)
 
+@macro_ex.config
+def base_config():
+    spec = {}
+    ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
+    _ = locals()
+    del _
+
 
 @macro_ex.named_config
 def hyperparameter_search(inner_ex):
@@ -37,19 +44,11 @@ def hyperparameter_search(inner_ex):
     :return:
     """
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search([1, 2, 4, 8])}
+    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
     modified_inner_ex['offset'] = 8
-    _ = locals()
-    del _
-
-
-@macro_ex.config
-def base_config():
-    spec = {}
-    ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
     _ = locals()
     del _
 

@@ -4,7 +4,9 @@ only tested in a single-machine, multi-CPU setting.
 
 If you don't have any familiarity with Ray (a parallelization library) or 
 Sacred (an experiment configuration library), I'd recommend you taking a look over both of
-their documentation before you read this. 
+their documentation before you read this. Credit where due: this code is essentially a 
+simplified, teaching-friendly version of a setup from Adam Gleave's work on the [Adversarial 
+Policies codebase](https://github.com/HumanCompatibleAI/adversarial-policies)
 
 ### To test, run: 
 `python macro_experiment.py with hyperparameter_search`

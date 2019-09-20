@@ -6,7 +6,24 @@ If you don't have any familiarity with Ray (a parallelization library) or
 Sacred (an experiment configuration library), I'd recommend you taking a look over both of
 their documentation before you read this. 
 
-###At a high level, what's happening here is:
+### To test, run: 
+`python macro_experiment.py with hyperparameter_search`
+
+
+### Execution time differences
+(tested on a 12 logical core Mac): 
+
+Serial Execution:  
+- real    43.33s  
+- user    55.61s  
+- sys     12.68s  
+
+Parallel Ray Execution:  
+- real    14.56s  
+- user    7.18s  
+- sys     2.15s  
+
+### At a high level, what's happening here is:
 
 - We create our actual experiment of interest. In a machine learning context, maybe this is training a 
 model and capturing training accuracy.
@@ -23,7 +40,7 @@ experiment many times, combining the inner experiment's default parameters, the 
 our config, and the varying parameters of our config. 
 
 
-###Okay, let's get deeper into the weeds
+### Okay, let's get deeper into the weeds
 
 #### inner_experiment.py 
 (Inner_experiment is pretty cookie-cutter basic Sacred, so if you're familiar with Sacred 
@@ -132,21 +149,3 @@ Ray-generated `config` and runs our inner experiment.
 We then capture the results of `ray.tune.run`, which is an Analysis object that knows the tracked metric values 
 of all the runs, as well as the locations, so we print those out. 
 
-
-
-
-To test, run: 
-`python macro_experiment.py with hyperparameter_search`
-
-
-Execution time differences (tested on a 12 logical core Mac): 
-
-Serial Execution:  
-real    43.33s  
-user    55.61s  
-sys     12.68s  
-
-Parallel Execution:  
-real    14.56s  
-user    7.18s  
-sys     2.15s  

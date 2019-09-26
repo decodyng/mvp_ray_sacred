@@ -13,9 +13,9 @@ Policies codebase](https://github.com/HumanCompatibleAI/adversarial-policies)
 `python macro_experiment.py with hyperparameter_search`
 
 
-### Execution time differences
-`time serial_execution.sh`
-`time parallel_execution.sh`
+### Execution time differences  
+`time serial_execution.sh`  
+`time parallel_execution.sh`  
 
 (tested on a 12 logical core Mac): 
 

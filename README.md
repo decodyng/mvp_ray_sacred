@@ -2,17 +2,21 @@ A simple toy example to demonstrate the basics of creating a Ray tune experiment
 as its worker function versions of Sacred experiments modified with values from the Ray tune config. Currently 
 only tested in a single-machine, multi-CPU setting.  
 
-If you don't have any familiarity with Ray (a parallelization library) or 
-Sacred (an experiment configuration library), I'd recommend you taking a look over both of
+If you don't have any familiarity with [Ray Tune](https://ray.readthedocs.io/en/latest/tune.html) 
+(a parallelization library) or [Sacred](https://github.com/IDSIA/sacred/tree/master/sacred) 
+(an experiment configuration library), I'd recommend you taking a look over both of
 their documentation before you read this. Credit where due: this code is essentially a 
 simplified, teaching-friendly version of a setup from Adam Gleave's work on the [Adversarial 
 Policies codebase](https://github.com/HumanCompatibleAI/adversarial-policies)
 
-### To test, run: 
+### To run the Ray version of the experiment, run: 
 `python macro_experiment.py with hyperparameter_search`
 
 
 ### Execution time differences
+`time serial_execution.sh`
+`time parallel_execution.sh`
+
 (tested on a 12 logical core Mac): 
 
 Serial Execution:  

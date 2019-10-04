@@ -6,7 +6,7 @@ import os.path as osp
 from ray.tune import track
 from utils import sacred_copy, update
 
-macro_ex = Experiment('macro_ex', ingredients=[inner_ex])
+outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
 
 
 def worker_function(inner_ex_config, config):
@@ -29,7 +29,8 @@ def worker_function(inner_ex_config, config):
     ret_val = inner_ex.run(config_updates=merged_config)
     track.log(accuracy=ret_val.result)
 
-@macro_ex.config
+
+@outer_exp.config
 def base_config():
     spec = {}
     ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
@@ -37,7 +38,7 @@ def base_config():
     del _
 
 
-@macro_ex.named_config
+@outer_exp.named_config
 def hyperparameter_search(inner_ex):
     """
     :param inner_ex: The config dict for inner_ex, available because it is an ingredient of macro_ex
@@ -53,7 +54,7 @@ def hyperparameter_search(inner_ex):
     del _
 
 
-@macro_ex.main
+@outer_exp.main
 def multi_main(modified_inner_ex, exp_name, spec):
     inner_ex_config = sacred_copy(modified_inner_ex)
 
@@ -77,8 +78,8 @@ def multi_main(modified_inner_ex, exp_name, spec):
 
 def main():
     observer = FileStorageObserver.create('macro_results')
-    macro_ex.observers.append(observer)
-    macro_ex.run_commandline()
+    outer_exp.observers.append(observer)
+    outer_exp.run_commandline()
 
 
 if __name__ == '__main__':

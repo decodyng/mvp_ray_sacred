@@ -1,1 +1,1 @@
-python macro_experiment.py with hyperparameter_search
+python outer_experiment.py with hyperparameter_search

@@ -3,7 +3,7 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from ray import tune
 import os.path as osp
-from ray.tune import track
+import ray
 from utils import sacred_copy, update
 
 outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
@@ -27,7 +27,7 @@ def worker_function(inner_ex_config, config):
     observer = FileStorageObserver.create(osp.join('inner_nested_results'))
     inner_ex.observers.append(observer)
     ret_val = inner_ex.run(config_updates=merged_config)
-    track.log(accuracy=ret_val.result)
+    ray.tune.track.log(accuracy=ret_val.result)
 
 
 @outer_exp.config

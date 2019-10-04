@@ -57,10 +57,8 @@ configs already, maybe skip through this bit)
 ```def baseline_config():
     exponent = 2
     offset = 10
-    _ = locals()
-    del _
 ```
-This part is just setting some default values for our inner experiment
+This part is just setting some default values for our inner experiment.
 ```
 @inner_ex.main
 def my_inner_experiment(exponent, offset):
@@ -116,8 +114,6 @@ def hyperparameter_search(inner_ex):
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
     modified_inner_ex['offset'] = 8
-    _ = locals()
-    del _
 ```
 Our imagined hyperparameter-tuning config. Here, `offset` is being modified from the default, but 
 remains constant for all the hyperparameter tuning runs. `exponent` is being tuned over, with 

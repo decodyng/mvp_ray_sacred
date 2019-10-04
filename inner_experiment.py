@@ -9,8 +9,6 @@ inner_ex = Experiment('inner_ex')
 def baseline_config():
     exponent = 2
     offset = 10
-    _ = locals()
-    del _
 
 
 @inner_ex.main

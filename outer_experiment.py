@@ -34,8 +34,6 @@ def worker_function(inner_ex_config, config):
 def base_config():
     spec = {}
     ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
-    _ = locals()
-    del _
 
 
 @outer_exp.named_config
@@ -50,8 +48,6 @@ def hyperparameter_search(inner_ex):
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
     modified_inner_ex['offset'] = 8
-    _ = locals()
-    del _
 
 
 @outer_exp.main

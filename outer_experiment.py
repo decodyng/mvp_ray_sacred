@@ -43,7 +43,7 @@ def hyperparameter_search(inner_ex):
     :return:
     """
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
+    spec = {"exponent": tune.grid_search(list(range(1, 200)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray

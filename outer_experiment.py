@@ -61,6 +61,7 @@ def multi_main(modified_inner_ex, exp_name, spec):
 
     # Need to sacred_copy spec because otherwise it's a ReadOnlyDict, which causes problems
     spec_copy = sacred_copy(spec)
+    ray.init(address="auto")
     analysis = tune.run(
         trainable_function,
         name=exp_name,

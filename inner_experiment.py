@@ -10,6 +10,10 @@ def baseline_config():
     exponent = 2
     offset = 10
 
+@inner_ex.named_config
+def high_offset():
+    offset = 50
+
 
 @inner_ex.main
 def my_inner_experiment(exponent, offset):

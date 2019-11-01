@@ -4,7 +4,7 @@ from sacred.observers import FileStorageObserver
 from ray import tune
 import os.path as osp
 import ray
-from utils import sacred_copy, update
+from utils import sacred_copy, update, detect_ec2
 
 outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
 
@@ -52,7 +52,10 @@ def multi_main(modified_inner_ex, exp_name, spec):
 
     # Need to sacred_copy spec because otherwise it's a ReadOnlyDict, which causes problems
     spec_copy = sacred_copy(spec)
-    #ray.init(address="auto")
+    if detect_ec2():
+        ray.init(address="auto")
+    else:
+        ray.init()
     analysis = tune.run(
         trainable_function,
         name=exp_name,

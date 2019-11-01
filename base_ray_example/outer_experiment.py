@@ -4,6 +4,8 @@ from sacred.observers import FileStorageObserver
 import ray
 import os.path as osp
 import ray
+from utils import detect_ec2
+
 
 outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
 
@@ -53,10 +55,13 @@ def other_worker(val):
 
 @outer_exp.main
 def multi_main(config_permutations):
-    #ray.init(address="auto")
-    ray.init()
+    if detect_ec2():
+        ray.init(address="auto")
+    else:
+        ray.init()
     results = [worker_function.remote(named_configs=list(config.get("named_configs", [])),
-                                      config_updates = dict(config.get("config_updates", {}))) for config in config_permutations]
+                                      config_updates=dict(config.get("config_updates", {})))
+               for config in config_permutations]
     resolved_results = ray.get(results)
     print(resolved_results)
 

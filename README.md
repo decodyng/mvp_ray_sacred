@@ -57,9 +57,5 @@ The goal of this repo is to show simplified patterns for how the Ray distributed
  observers for each run the way you do in base Ray. 
  
  
- It seems cleaner to separate out documentation for the cluster definition file into its own 
- documentation, which can [be found here.](ClusterDocumentation.md)
- 
- 
  
  

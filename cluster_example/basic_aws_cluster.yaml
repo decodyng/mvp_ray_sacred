@@ -99,7 +99,7 @@ worker_nodes:
 # dictionary from REMOTE_PATH: LOCAL_PATH, e.g.
 # TODO can I auto-detect what branch I'm on?
 file_mounts: {
-    "tmp/current_branch": ".git/HEAD"
+    "tmp/current_branch": ".git/HEAD",
     "/tmp/git_refs": ".git/refs/heads/"
 }
 
@@ -116,7 +116,7 @@ setup_commands:
     - echo 'export PATH="$HOME/anaconda3/envs/tensorflow_p36/bin:$PATH"' >> ~/.bashrc
     - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.dev6-cp36-cp36m-manylinux1_x86_64.whl
     - test -e mvp_ray_sacred || git clone https://github.com/decodyng/mvp_ray_sacred.git
-    - export WORKING_BRANCH=$(cut -d'/' -f3 <<< cat .git/HEAD)
+    - export WORKING_BRANCH=$(cut -d'/' -f3 <<< cat tmp/current_branch)
     - cd mvp_ray_sacred && git fetch && git checkout `cat /tmp/git_refs/$WORKING_BRANCH` && pip install -r requirements.txt
     # Consider uncommenting these if you also want to run apt-get commands during setup
     # - sudo pkill -9 apt-get || true

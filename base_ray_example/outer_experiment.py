@@ -7,7 +7,7 @@ import ray
 from utils import detect_ec2
 
 
-outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
+outer_exp = Experiment('outer_exp')
 
 
 @ray.remote
@@ -46,12 +46,7 @@ def base_config():
     config_permutations += [
         dict(named_configs=["high_offset"], config_updates={"exponent": exponent}) for exponent in range(10)
     ]
-    ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
 
-@ray.remote
-def other_worker(val):
-    print(val)
-    return val**2
 
 @outer_exp.main
 def multi_main(config_permutations):

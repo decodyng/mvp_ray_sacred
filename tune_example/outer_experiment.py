@@ -4,7 +4,7 @@ from sacred.observers import FileStorageObserver
 from ray import tune
 import os.path as osp
 import ray
-from utils import sacred_copy, update
+from utils import sacred_copy, update, detect_ec2
 
 outer_exp = Experiment('outer_exp', ingredients=[inner_ex])
 
@@ -24,26 +24,17 @@ def worker_function(inner_ex_config, config):
     inner_ex_dict = dict(inner_ex_config)
     merged_config = update(inner_ex_dict, config)
 
-    observer = FileStorageObserver.create(osp.join('inner_nested_results'))
+    observer = FileStorageObserver.create(osp.join('tune_inner_nested_results'))
     inner_ex.observers.append(observer)
     ret_val = inner_ex.run(config_updates=merged_config)
     ray.tune.track.log(accuracy=ret_val.result)
 
 
 @outer_exp.config
-def base_config():
-    spec = {}
+def base_config(inner_ex):
     ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
-
-
-@outer_exp.named_config
-def hyperparameter_search(inner_ex):
-    """
-    :param inner_ex: The config dict for inner_ex, available because it is an ingredient of macro_ex
-    :return:
-    """
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search(list(range(1, 200)))}
+    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
@@ -61,7 +52,10 @@ def multi_main(modified_inner_ex, exp_name, spec):
 
     # Need to sacred_copy spec because otherwise it's a ReadOnlyDict, which causes problems
     spec_copy = sacred_copy(spec)
-    ray.init(address="auto")
+    if detect_ec2():
+        ray.init(address="auto")
+    else:
+        ray.init()
     analysis = tune.run(
         trainable_function,
         name=exp_name,

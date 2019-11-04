@@ -1,5 +1,7 @@
 import copy
 import collections
+import urllib
+
 
 # Both of these are copied from the adversarial policies codebase
 
@@ -31,3 +33,17 @@ def sacred_copy(o):
         return [sacred_copy(v) for v in o]
     else:
         return copy.deepcopy(o)
+
+
+def detect_ec2():
+    """Auto-detect if we are running on EC2."""
+    try:
+        EC2_ID_URL = 'http://169.254.169.254/latest/dynamic/instance-identity/document'
+        with urllib.request.urlopen(EC2_ID_URL, timeout=3) as f:
+            response = f.read().decode()
+            if 'availabilityZone' in response:
+                return True
+            else:
+                raise ValueError(f"Received unexpected response from '{EC2_ID_URL}'")
+    except urllib.error.URLError:
+        return False

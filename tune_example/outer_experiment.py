@@ -34,7 +34,7 @@ def worker_function(inner_ex_config, config):
 def base_config(inner_ex):
     ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search(list(range(1, 25)))}
+    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray

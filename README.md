@@ -4,7 +4,7 @@ The goal of this repo is to show simplified patterns for how the Ray distributed
  I. A toy example using the basic Ray API to run experiments
  
  II. A toy example using Ray Tune (a hyperparameter-tuning library within Ray) to run 
- experiments 
+ experiments
  
  III. An example of a simplified but confirmed-working yaml configuration to create an AWS cluster. 
  

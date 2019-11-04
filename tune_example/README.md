@@ -12,25 +12,12 @@ Policies codebase](https://github.com/HumanCompatibleAI/adversarial-policies)
 ### Before getting started, install requirements (preferably in a virtualenv!)
 `pip install -r requirements.txt`
 
-### To run the Ray version of the Sacred experiment, run: 
-`python outer_experiment.py with hyperparameter_search`
+### To run the Ray version of the Sacred experiment
+Run from top level of repo: 
+`python -m tune_example.outer_experiment`
 
-
-### Execution time differences  
-`time ./serial_execution.sh`  
-`time ./parallel_execution.sh`  
-
-(tested on a 12 logical core Mac): 
-
-Serial Execution:  
-- real    43.33s  
-- user    55.61s  
-- sys     12.68s  
-
-Parallel Ray Execution:  
-- real    14.56s  
-- user    7.18s  
-- sys     2.15s  
+### To try running the non-parallel equivalent: 
+`source ./serial_execution.sh`
 
 ### At a high level, what's happening here is:
 

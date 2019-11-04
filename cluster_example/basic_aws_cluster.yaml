@@ -97,7 +97,6 @@ worker_nodes:
 
 # Files or directories to copy to the head and worker nodes. The format is a
 # dictionary from REMOTE_PATH: LOCAL_PATH, e.g.
-# TODO can I auto-detect what branch I'm on?
 file_mounts: {
     "/tmp/current_branch": ".git/HEAD",
 }
@@ -109,18 +108,13 @@ initialization_commands: []
 
 # List of shell commands to run to set up nodes.
 setup_commands:
-    # Note: if you're developing Ray, you probably want to create an AMI that
-    # has your Ray repo pre-cloned. Then, you can replace the pip installs
-    # below with a git checkout <your_sha> (and possibly a recompile).
-    - echo 'export PATH="$HOME/anaconda3/envs/tensorflow_p36/bin:$PATH"' >> ~/.bashrc
-    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.dev6-cp36-cp36m-manylinux1_x86_64.whl
-    - test -e mvp_ray_sacred || git clone https://github.com/decodyng/mvp_ray_sacred.git
-    - cd mvp_ray_sacred && git fetch && pip install -r requirements.txt
-    - cd mvp_ray_sacred && source checkout_working_branch.sh
-    # Consider uncommenting these if you also want to run apt-get commands during setup
-    # - sudo pkill -9 apt-get || true
-    # - sudo pkill -9 dpkg || true
-    # - sudo dpkg --configure -a
+    #
+    - echo 'export PATH="$HOME/anaconda3/envs/tensorflow_p36/bin:$PATH"' >> ~/.bashrc # Adding Python to PATH
+    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.dev6-cp36-cp36m-manylinux1_x86_64.whl # Installing Ray
+    - test -e mvp_ray_sacred || git clone https://github.com/decodyng/mvp_ray_sacred.git # Clone repo if it does not exist yet
+    - cd mvp_ray_sacred && git fetch && pip install -r requirements.txt # CD into repo, fetch and install requirements
+    - cd mvp_ray_sacred && source checkout_working_branch.sh # CD into repo and checkout whichever branch was the working branch on development machine
+
 
 # Custom commands that will be run on the head node after common setup.
 head_setup_commands:

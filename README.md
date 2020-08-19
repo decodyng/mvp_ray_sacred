@@ -1,12 +1,12 @@
 The goal of this repo is to show simplified patterns for how the Ray distributed computing
  library can be used to accelerate Sacred experiments. It currently has three sections: 
  
- I. A toy example using the basic Ray API to run experiments
+ I. A toy example using the basic Ray API to run experiments (contained within `base_ray_example`) 
  
  II. A toy example using Ray Tune (a hyperparameter-tuning library within Ray) to run 
- experiments
+ experiments (contained within `tune_example`) 
  
- III. An example of a simplified but confirmed-working yaml configuration to create an AWS cluster. 
+ III. An example of a simplified but confirmed-working yaml configuration to create an AWS cluster. (contained within `cluster_example`) 
  
  ## What is Sacred? 
  Sacred is a Python experiment framework library that specifies ways to define different configuration

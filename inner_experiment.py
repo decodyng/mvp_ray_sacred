@@ -18,7 +18,7 @@ def high_offset():
 @inner_ex.main
 def my_inner_experiment(exponent, offset):
     max_rand_val = 0
-    for i in range(50000):
+    for i in range(10000000):
         rand_val = random()
         new_val = rand_val**exponent + offset
         max_rand_val = max(new_val, max_rand_val)

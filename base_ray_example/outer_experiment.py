@@ -1,17 +1,14 @@
-from inner_experiment import inner_ex
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
-import ray
 import os.path as osp
 import ray
-from utils import detect_ec2
 
 
 outer_exp = Experiment('outer_exp')
 
 
 @ray.remote
-def worker_function(config_updates, named_configs):
+def worker_function(config_updates, named_configs, observer_dir):
     """
     Combines experiment config and auto-generated Ray config, and runs an iteration of
     inner_ex on that combined config.
@@ -22,13 +19,16 @@ def worker_function(config_updates, named_configs):
     :return:
     """
     from inner_experiment import inner_ex
-    run_id = f"named_configs:{'-'.join(named_configs)}"
+    run_id = f"named_configs:{'-'.join(named_configs)}__"
     for k, v in config_updates.items():
         run_id += f"_{k}:{v}"
     print(f"Config Updates: {config_updates}")
     print(f"Named Configs: {named_configs}")
     print(f"Run ID: {run_id}")
-    observer = FileStorageObserver.create(osp.join('inner_nested_results', run_id))
+    # Observer will be created inside a run_id subdirectory inside
+    # the outer experiment directory, to avoid the parallel runs experiencing
+    # race conditions
+    observer = FileStorageObserver.create(osp.join(observer_dir, run_id))
     inner_ex.observers.append(observer)
     if config_updates is None:
         config_updates = {}
@@ -38,24 +38,20 @@ def worker_function(config_updates, named_configs):
     ret_val = inner_ex.run(config_updates=config_updates, named_configs=named_configs)
     return ret_val.result
 
+
 @outer_exp.config
 def base_config():
-    config_permutations = [
-        dict(named_configs=["high_offset"])
-    ]
-    config_permutations += [
-        dict(named_configs=["high_offset"], config_updates={"exponent": exponent}) for exponent in range(10)
-    ]
+    # explicitly make a list of config updates we want to test
+    config_permutations = [dict(named_configs=["high_offset"], config_updates={"exponent": exponent})
+                           for exponent in range(10)]
 
 
 @outer_exp.main
 def multi_main(config_permutations):
-    if detect_ec2():
-        ray.init(address="auto")
-    else:
-        ray.init()
+    ray.init()
     results = [worker_function.remote(named_configs=list(config.get("named_configs", [])),
-                                      config_updates=dict(config.get("config_updates", {})))
+                                      config_updates=dict(config.get("config_updates", {})),
+                                      observer_dir=outer_exp.observers[0].dir)
                for config in config_permutations]
     resolved_results = ray.get(results)
     print(resolved_results)

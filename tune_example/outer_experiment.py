@@ -2,7 +2,6 @@ from inner_experiment import inner_ex
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from ray import tune
-import os.path as osp
 import ray
 from utils import sacred_copy, update, detect_ec2
 
@@ -24,17 +23,19 @@ def worker_function(inner_ex_config, config):
     inner_ex_dict = dict(inner_ex_config)
     merged_config = update(inner_ex_dict, config)
 
-    observer = FileStorageObserver.create(osp.join('tune_inner_nested_results'))
+    # This will create an observer in the Tune trial directory, meaning that
+    # inner experiment configs will be saved at <trial.log_dir>/1
+    observer = FileStorageObserver.create(tune.get_trial_dir())
     inner_ex.observers.append(observer)
     ret_val = inner_ex.run(config_updates=merged_config)
-    ray.tune.track.log(accuracy=ret_val.result)
+    tune.report(accuracy=ret_val.result)
 
 
 @outer_exp.config
 def base_config(inner_ex):
     ray_server = None # keeping this here as a reminder we could start an autoscaling server if we wanted
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
+    spec = {"exponent": tune.grid_search(list(range(1, 10)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
@@ -55,13 +56,17 @@ def multi_main(modified_inner_ex, exp_name, spec):
     if detect_ec2():
         ray.init(address="auto")
     else:
-        ray.init()
+        ray.init(num_cpus=5)
     analysis = tune.run(
         trainable_function,
         name=exp_name,
-        config=spec_copy
+        verbose=0,
+        config=spec_copy,
+        # This tells Ray to save its results inside the outer experiment's
+        # File Observer directory
+        local_dir=outer_exp.observers[0].dir
     )
-    best_config = analysis.get_best_config(metric="accuracy")
+    best_config = analysis.get_best_config(metric="accuracy", mode="max")
     print(f"Best config is: {best_config}")
     print("Results available at: ")
     print(analysis._get_trial_paths())

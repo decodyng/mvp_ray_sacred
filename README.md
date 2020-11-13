@@ -1,10 +1,21 @@
 The goal of this repo is to show simplified patterns for how the Ray distributed computing
  library can be used to accelerate Sacred experiments. It currently has three sections: 
  
- I. A toy example using the basic Ray API to run experiments (contained within `base_ray_example`) 
+
+ I. A toy example using Ray Tune (a hyperparameter-tuning library within Ray) to run 
+ experiments (contained within `tune_example`). This should be run from the top level `mvp_ray_sacred` 
+ directory with the invocation: 
+ ```
+python -m tune_example.outer_experiment
+```
+ I'd recommend reading through this example first, since it explains the structure of `inner_experiment.py`, 
+ which is also used by `base_ray_example`. 
  
- II. A toy example using Ray Tune (a hyperparameter-tuning library within Ray) to run 
- experiments (contained within `tune_example`) 
+  II. A toy example using the basic Ray API to run experiments (contained within `base_ray_example`). 
+ This should be run from the top level `mvp_ray_sacred` directory with the invocation: 
+ ```
+python -m base_ray_example.outer_experiment
+```
  
  III. An example of a simplified but confirmed-working yaml configuration to create an AWS cluster. (contained within `cluster_example`) 
  
@@ -50,8 +61,9 @@ The goal of this repo is to show simplified patterns for how the Ray distributed
  It's possible to engineer solutions around this, and one example of such a solution is present in the example, but it 
  is mildly annoying.
  
- Overall, my recommendation would be to start out by using the basic Ray API for simple use cases, and if you have a larger-scale project, 
- take the time to make it work with the more full-featured Tune API. Another consideration is that Tune is nicer to work
+ Overall, my recommendation would be to understanding the underlying mechanisms of the Base Ray design, 
+  but to probably prefer to use Tune's API if you are doing hyperparameter tuning, or runnning the same 
+  trial under many different configurations. Another decision factor is that Tune is nicer to work
  with if you are relying a lot on the saved-file output stored by a FileStorageObserver, because Tune will auto-create 
  directories for each run according to the tuned parameter values, so you don't have to worry about creating separate 
  observers for each run the way you do in base Ray. 

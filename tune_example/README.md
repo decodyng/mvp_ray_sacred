@@ -50,7 +50,7 @@ This part is just setting some default values for our inner experiment.
 @inner_ex.main
 def my_inner_experiment(exponent, offset):
     max_rand_val = 0
-    for i in range(50000):
+    for i in range(10000000):
         rand_val = random()
         new_val = rand_val**exponent + offset
         max_rand_val = max(new_val, max_rand_val)
@@ -68,7 +68,7 @@ this is the method that is run when we call inner_ex.run() with a given config.
     inner_ex_dict = dict(inner_ex_config)
     merged_config = update(inner_ex_dict, config)
 
-    observer = FileStorageObserver.create(osp.join('inner_nested_results'))
+    observer = FileStorageObserver.create(tune.get_trial_dir())
     inner_ex.observers.append(observer)
     ret_val = inner_ex.run(config_updates=merged_config)
     track.log(accuracy=ret_val.result)
@@ -96,7 +96,7 @@ def hyperparameter_search(inner_ex):
     :return:
     """
     exp_name = "hyperparameter_search"
-    spec = {"exponent": tune.grid_search(list(range(1, 50)))}
+    spec = {"exponent": tune.grid_search(list(range(1, 10)))}
     modified_inner_ex = dict(inner_ex)
     # To test that we can run tuning jobs with parameters modified from default config
     # but not being sampled over through Ray
@@ -104,7 +104,7 @@ def hyperparameter_search(inner_ex):
 ```
 Our imagined hyperparameter-tuning config. Here, `offset` is being modified from the default, but 
 remains constant for all the hyperparameter tuning runs. `exponent` is being tuned over, with 
-values between 1 and 50. 
+values between 1 and 10. 
 
 
 ```@outer_exp.main
@@ -122,7 +122,7 @@ def multi_main(modified_inner_ex, exp_name, spec):
         name=exp_name,
         config=spec_copy
     )
-    best_config = analysis.get_best_config(metric="accuracy")
+    best_config = analysis.get_best_config(metric="accuracy", mode="max")
     print(f"Best config is: {best_config}")
     print("Results available at: ")
     print(analysis._get_trial_paths())
